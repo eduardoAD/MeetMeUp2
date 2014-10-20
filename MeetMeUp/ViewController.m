@@ -23,48 +23,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self performSearchWithKeyword:@"mobile"];
-
+    [Event performSearchWithKeyword:@"mobile" result:^(NSArray *events) {
+        self.dataArray = events;
+    }];
 }
 
-- (void)performSearchWithKeyword:(NSString *)keyword
-{
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.meetup.com/2/open_events.json?zip=60604&text=%@&time=,1w&key=35476c66197967107464723a5869147",keyword]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                               
-                               NSArray *jsonArray = [[NSJSONSerialization JSONObjectWithData:data
-                                                                                     options:NSJSONReadingAllowFragments
-                                                                                       error:nil] objectForKey:@"results"];
-                               
-                               
-                               self.dataArray = [Event eventsFromArray:jsonArray];
-                               [self.tableView reloadData];
-                           }];
-
+- (void) setDataArray:(NSArray *)dataArray{
+    _dataArray = dataArray;
+    [self.tableView reloadData];
 }
 
 #pragma mark - Tableview Methods
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.dataArray.count;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"eventCell"];
     
     Event *e = self.dataArray[indexPath.row];
     
     cell.textLabel.text = e.name;
     cell.detailTextLabel.text = e.address;
-    if (e.photoURL)
-    {
+    if (e.photoURL){
         NSURLRequest *imageReq = [NSURLRequest requestWithURL:e.photoURL];
         
         [NSURLConnection sendAsynchronousRequest:imageReq queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -74,13 +56,8 @@
                    [cell layoutSubviews];
                }
            });
-
-
         }];
-        
-        
-    }else
-    {
+    }else{
        [cell.imageView setImage:[UIImage imageNamed:@"logo"]];
     }
     
@@ -88,8 +65,7 @@
 }
 
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     EventDetailViewController *detailVC = [segue destinationViewController];
 
     Event *e = self.dataArray[self.tableView.indexPathForSelectedRow.row];
@@ -98,9 +74,10 @@
 
 #pragma searchbar delegate
 
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
-{
-    [self performSearchWithKeyword:searchBar.text];
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    [Event performSearchWithKeyword:searchBar.text result:^(NSArray *events) {
+        self.dataArray = events;
+    }];
     [searchBar resignFirstResponder];
 }
 

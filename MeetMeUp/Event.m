@@ -10,15 +10,10 @@
 
 @implementation Event
 
-
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary{
     self = [super init];
     if (self) {
-        
         self.name = dictionary[@"name"];
-        
-
         self.eventID = dictionary[@"id"];
         self.RSVPCount = [NSString stringWithFormat:@"%@",dictionary[@"yes_rsvp_count"]];
         self.hostedBy = dictionary[@"group"][@"name"];
@@ -30,17 +25,29 @@
     return self;
 }
 
-+ (NSArray *)eventsFromArray:(NSArray *)incomingArray
-{
++ (NSArray *)eventsFromArray:(NSArray *)incomingArray{
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithCapacity:incomingArray.count];
     
     for (NSDictionary *d in incomingArray) {
         Event *e = [[Event alloc]initWithDictionary:d];
         [newArray addObject:e];
-        
     }
     return newArray;
 }
 
++ (void)performSearchWithKeyword:(NSString *)keyword result:(void (^)(NSArray *))complete{
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.meetup.com/2/open_events.json?zip=60604&text=%@&time=,1w&key=35476c66197967107464723a5869147",keyword]];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+
+                               NSArray *jsonArray = [[NSJSONSerialization JSONObjectWithData:data
+                                                                                     options:NSJSONReadingAllowFragments
+                                                                                       error:nil] objectForKey:@"results"];
+                               complete([Event eventsFromArray:jsonArray]);
+                           }];
+}
 
 @end
