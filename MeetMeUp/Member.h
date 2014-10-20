@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Mobile Makers. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface Member : NSObject
 
@@ -20,5 +20,6 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (void)retrieveMember:(NSString *)memberID result:(void (^)(Member *))complete;
++ (void)imageFromURL:(NSURL *)url image:(void (^)(UIImage *))result;
 
 @end

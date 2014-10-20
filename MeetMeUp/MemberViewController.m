@@ -32,17 +32,12 @@
     _member = member;
     self.nameLabel.text = member.name;
     
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:member.photoURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        self.photoImageView.image = [UIImage imageWithData:data];
-
+    [Member imageFromURL:member.photoURL image:^(UIImage *photo) {
+        self.photoImageView.image = photo;
         [UIView animateWithDuration:.3 animations:^{
             self.photoImageView.alpha = 1;
         }];
-
     }];
-    
 }
-
-
 
 @end
