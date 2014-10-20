@@ -7,7 +7,7 @@
 //
 
 #import "Comment.h"
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface Event : NSObject
 
@@ -24,5 +24,6 @@
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (NSArray *)eventsFromArray:(NSArray *)incomingArray;
 + (void)performSearchWithKeyword:(NSString *)keyword result:(void (^)(NSArray *))complete;
++ (void)imageFromURL:(NSURL *)url image:(void (^)(UIImage *))result;
 
 @end

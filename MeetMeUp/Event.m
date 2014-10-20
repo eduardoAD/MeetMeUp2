@@ -50,4 +50,16 @@
                            }];
 }
 
++ (void)imageFromURL:(NSURL *)url image:(void (^)(UIImage *))result{
+    NSURLRequest *imageReq = [NSURLRequest requestWithURL:url];
+
+    [NSURLConnection sendAsynchronousRequest:imageReq queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!connectionError) {
+                result([UIImage imageWithData:data]);
+            }
+        });
+    }];
+}
+
 @end
