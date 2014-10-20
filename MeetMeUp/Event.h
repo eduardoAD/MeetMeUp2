@@ -25,5 +25,6 @@
 + (NSArray *)eventsFromArray:(NSArray *)incomingArray;
 + (void)performSearchWithKeyword:(NSString *)keyword result:(void (^)(NSArray *))complete;
 + (void)imageFromURL:(NSURL *)url image:(void (^)(UIImage *))result;
++ (void)retrieveComments:(NSString *)eventID result:(void (^)(NSArray *))complete;
 
 @end
