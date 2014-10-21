@@ -30,8 +30,9 @@
     self.addressLabel.text = self.event.address;
     self.countLabel.text = self.event.RSVPCount;
     self.hostedByLabel.text = self.event.hostedBy;
-    self.descriptionTextview.text = self.event.eventDescription;
 
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithData:[self.event.eventDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:nil error:nil];
+    self.descriptionTextview.attributedText = attributedString;
 
     self.navigationItem.rightBarButtonItem.title = @"MEHH";
 
